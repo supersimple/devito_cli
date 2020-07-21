@@ -15,6 +15,12 @@ Generates a short code for the given URL.
 `devito <URL> <SHORTCODE>`
 Stores the url and shortcode given. If the shortcode is not unique, returns an error.
 
+`devito info`
+Prints a list of all links
+
+`devito info <SHORTCODE>`
+Prints info about a link
+
 ## Installation
 Copy the `/devito` file into a location in your executable path.
 For example `cp ./devito /usr/bin/devito`

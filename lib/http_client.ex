@@ -5,6 +5,19 @@ defmodule DevitoCLI.HTTPClient do
 
   alias DevitoCLI.Config
 
+  def get(path) do
+    api_url =
+      :api_url
+      |> Config.get()
+      |> URI.merge(path)
+      |> to_string()
+
+    auth_token = Config.get(:auth_token)
+
+    :hackney.request(:get, api_url <> "?auth_token=#{auth_token}")
+    |> respond()
+  end
+
   def post(path, body) do
     api_url =
       :api_url
@@ -20,6 +33,11 @@ defmodule DevitoCLI.HTTPClient do
   end
 
   defp respond({:ok, 201, _resp_hdr, ref}) do
+    {:ok, body} = :hackney.body(ref)
+    body
+  end
+
+  defp respond({:ok, 200, _resp_hdr, ref}) do
     {:ok, body} = :hackney.body(ref)
     body
   end

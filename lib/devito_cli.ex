@@ -11,6 +11,22 @@ defmodule DevitoCLI do
     |> run()
   end
 
+  # get info about all links
+  defp run({[], ["info"], _errors}) do
+    case DevitoCLI.HTTPClient.get("api/") do
+      :error -> IO.puts("There was an error while trying to find the links")
+      body -> show_list_table(body)
+    end
+  end
+
+  # get info about a link
+  defp run({[], ["info", short_code], _errors}) do
+    case DevitoCLI.HTTPClient.get("api/#{short_code}") do
+      :error -> IO.puts("There was an error while trying to find the link")
+      body -> show_link(body)
+    end
+  end
+
   # with no parsed options, read the config
   defp run({[], ["config"], _errors}) do
     url = Config.get(:api_url)
@@ -66,6 +82,57 @@ defmodule DevitoCLI do
       _ -> IO.puts("Link was created")
     end
   end
+
+  defp show_list_table(json_list) do
+    case Jason.decode(json_list) do
+      {:ok, %{"links" => decoded}} ->
+        print_header()
+        Enum.each(decoded, &print_row/1)
+
+      _ ->
+        IO.puts("Could not print the link info")
+    end
+  end
+
+  defp show_link(json) do
+    case Jason.decode(json) do
+      {:ok, decoded} ->
+        print_header()
+        print_row(decoded)
+
+      _ ->
+        IO.puts("Could not print the link info")
+    end
+  end
+
+  defp print_header do
+    IO.puts(
+      String.pad_trailing("Short Code", 20) <>
+        String.pad_trailing("Clicks", 7) <>
+        String.pad_trailing("URL", 53)
+    )
+
+    IO.puts(
+      String.pad_trailing("", 20, "_") <>
+        String.pad_trailing("", 7, "_") <>
+        String.pad_trailing("", 53, "_")
+    )
+  end
+
+  defp print_row(%{
+         "count" => count,
+         "created_at" => _created_at,
+         "short_code" => short_code,
+         "url" => url
+       }) do
+    IO.puts(
+      String.pad_trailing(short_code, 20) <>
+        String.pad_trailing("#{count}", 7) <>
+        String.pad_trailing(url, 53)
+    )
+  end
+
+  defp print_row(bad_data), do: IO.inspect(bad_data)
 
   defp hash_token(token) do
     :sha256
