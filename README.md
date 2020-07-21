@@ -1,21 +1,23 @@
 # DevitoCli
+CLI app for [Devito Link Shortener](https://github.com/supersimple/devito)
 
-**TODO: Add description**
+## Functions
+`devito config`
+shows the existing config settings.
+
+`devito config --authtoken <AUTHTOKEN> --apiurl <APIURL>`
+AUTHTOKEN will need to match the AUTHTOKEN env var in the Devito app.
+APIURL is the URL used for the shortener, for example: "https://sprsm.pl"
+
+`devito <URL>`
+Generates a short code for the given URL.
+
+`devito <URL> <SHORTCODE>`
+Stores the url and shortcode given. If the shortcode is not unique, returns an error.
 
 ## Installation
+Copy the `/devito` file into a location in your executable path.
+For example `cp ./devito /usr/bin/devito`
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `devito_cli` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:devito_cli, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/devito_cli](https://hexdocs.pm/devito_cli).
+You can also run the script from this directory using `./devito`
 
