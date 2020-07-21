@@ -36,17 +36,17 @@ defmodule DevitoCLI do
     end
   end
 
-  defp run({[url], _flags, _errors}) do
-    case DevitoCLI.HTTPClient.post(url: url) do
-      {:ok, 200, _resp, _ref} -> :ok
-      _ -> :error
+  defp run({_parsed, [url], _errors}) do
+    case DevitoCLI.HTTPClient.post("api/link", url: url) do
+      :error -> :error
+      body -> show_short_code(body)
     end
   end
 
-  defp run({[url, short_code], _flags, _errors}) do
-    case DevitoCLI.HTTPClient.post(url: url, short_code: short_code) do
-      {:ok, 200, _resp, _ref} -> :ok
-      _ -> :error
+  defp run({_parsed, [url, short_code], _errors}) do
+    case DevitoCLI.HTTPClient.post("api/link", url: url, short_code: short_code) do
+      :error -> :error
+      body -> show_short_code(body)
     end
   end
 
@@ -55,5 +55,15 @@ defmodule DevitoCLI do
     IO.puts("`devito config --apiurl <APIURL> --authtoken <TOKEN>`")
     IO.puts("`devito URL`")
     IO.puts("`devito URL SHORT_CODE`")
+  end
+
+  defp show_short_code(json) do
+    with {:ok, decoded} <- Jason.decode(json),
+         short_code <- Map.get(decoded, "short_code"),
+         api_url <- Config.get(:api_url) do
+      URI.merge(api_url, short_code) |> to_string() |> IO.puts()
+    else
+      _ -> IO.inspect(json)
+    end
   end
 end
