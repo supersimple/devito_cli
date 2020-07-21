@@ -16,13 +16,13 @@ defmodule DevitoCLI do
     url = Config.get(:api_url)
     token = Config.get(:auth_token)
     IO.puts("API URL: #{url}")
-    IO.puts("Auth Token: #{token}")
+    IO.puts("Auth Token: #{inspect(token)}")
     IO.puts("\nUpdate these settings using `devito config --apiurl <APIURL> --authtoken <TOKEN>")
   end
 
   defp run({parsed, ["config"], _errors}) do
     apiurl = Keyword.get(parsed, :apiurl)
-    authtoken = Keyword.get(parsed, :authtoken)
+    authtoken = Keyword.get(parsed, :authtoken) |> hash_token()
 
     case Config.write(api_url: apiurl, auth_token: authtoken) do
       :ok ->
@@ -63,7 +63,13 @@ defmodule DevitoCLI do
          api_url <- Config.get(:api_url) do
       URI.merge(api_url, short_code) |> to_string() |> IO.puts()
     else
-      _ -> IO.inspect(json)
+      _ -> IO.puts("Link was created")
     end
+  end
+
+  defp hash_token(token) do
+    :sha256
+    |> :crypto.hash(token)
+    |> Base.encode64()
   end
 end
