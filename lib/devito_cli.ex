@@ -38,14 +38,14 @@ defmodule DevitoCLI do
 
   defp run({_parsed, [url], _errors}) do
     case DevitoCLI.HTTPClient.post("api/link", url: url) do
-      :error -> :error
+      :error -> IO.puts("There was an error while trying to create your link")
       body -> show_short_code(body)
     end
   end
 
   defp run({_parsed, [url, short_code], _errors}) do
     case DevitoCLI.HTTPClient.post("api/link", url: url, short_code: short_code) do
-      :error -> :error
+      :error -> IO.puts("There was an error while trying to create your link")
       body -> show_short_code(body)
     end
   end
