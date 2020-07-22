@@ -134,6 +134,8 @@ defmodule DevitoCLI do
 
   defp print_row(bad_data), do: IO.inspect(bad_data)
 
+  defp hash_token(nil), do: nil
+
   defp hash_token(token) do
     :sha256
     |> :crypto.hash(token)
