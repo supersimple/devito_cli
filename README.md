@@ -1,6 +1,9 @@
 # DevitoCli
 CLI app for [Devito Link Shortener](https://github.com/supersimple/devito)
 
+## Description
+The CLI is designed as an Elixir Escript. To build your own version, run `mix escript.build`
+
 ## Functions
 `devito config`
 shows the existing config settings.

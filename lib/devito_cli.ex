@@ -71,6 +71,8 @@ defmodule DevitoCLI do
     IO.puts("`devito config --apiurl <APIURL> --authtoken <TOKEN>`")
     IO.puts("`devito URL`")
     IO.puts("`devito URL SHORT_CODE`")
+    IO.puts("`devito info`")
+    IO.puts("`devito info SHORT_CODE`")
   end
 
   defp show_short_code(json) do
