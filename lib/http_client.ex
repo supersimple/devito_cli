@@ -5,7 +5,7 @@ defmodule DevitoCLI.HTTPClient do
 
   alias DevitoCLI.Config
 
-  def get(path) do
+  def get(path, params \\ []) do
     api_url =
       :api_url
       |> Config.get()
@@ -14,7 +14,12 @@ defmodule DevitoCLI.HTTPClient do
 
     auth_token = Config.get(:auth_token)
 
-    :hackney.request(:get, api_url <> "?auth_token=#{auth_token}")
+    params =
+      Keyword.merge([auth_token: auth_token], params)
+      |> Enum.map(fn {k, v} -> "#{k}=#{v}" end)
+      |> Enum.join("&")
+
+    :hackney.request(:get, api_url <> "?#{params}")
     |> respond()
   end
 

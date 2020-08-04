@@ -27,6 +27,17 @@ defmodule DevitoCLI do
     end
   end
 
+  defp run({[], ["export", path], _errors}) do
+    case DevitoCLI.HTTPClient.get("api/", download: 1) do
+      :error -> IO.puts("There was an error downloading your links. Try `devito info`.")
+      body -> export_links(body, path)
+    end
+  end
+
+  defp run({[], ["export"], _errors}) do
+    IO.puts("You must include a path to save the export file to. Try `devito export some/path/`")
+  end
+
   # with no parsed options, read the config
   defp run({[], ["config"], _errors}) do
     url = Config.get(:api_url)
@@ -142,5 +153,11 @@ defmodule DevitoCLI do
     :sha256
     |> :crypto.hash(token)
     |> Base.encode64()
+  end
+
+  defp export_links(json, path) do
+    path
+    |> Path.join("devito_links.json")
+    |> File.write(json)
   end
 end
