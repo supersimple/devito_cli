@@ -38,6 +38,12 @@ defmodule DevitoCLI do
     IO.puts("You must include a path to save the export file to. Try `devito export some/path/`")
   end
 
+  defp run({[], ["deploy"], _errors}) do
+    export_to_tmp()
+    deploy()
+    import_links()
+  end
+
   # with no parsed options, read the config
   defp run({[], ["config"], _errors}) do
     url = Config.get(:api_url)
@@ -159,5 +165,32 @@ defmodule DevitoCLI do
     path
     |> Path.join("devito_links.json")
     |> File.write("{\"data\": " <> json <> "}")
+  end
+
+  defp export_to_tmp do
+    DevitoCLI.HTTPClient.get("api/", download: 1) |> export_links(System.tmp_dir())
+  end
+
+  defp deploy do
+    System.cmd("git", ["push", "gigalixir", "+HEAD:master"])
+    IO.puts("Waiting for deployment to complete...")
+    :timer.sleep(30_000)
+  end
+
+  defp import_links do
+    url = Config.get(:api_url)
+    token = Config.get(:auth_token)
+    body = File.read!(Path.join(System.tmp_dir(), "devito_links.json"))
+    api_url = Path.join(url, "/api/import?auth_token=#{token}")
+
+    System.cmd("curl", [
+      "-X",
+      "POST",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "#{body}",
+      "#{api_url}"
+    ])
   end
 end
