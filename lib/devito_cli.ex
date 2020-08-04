@@ -158,6 +158,6 @@ defmodule DevitoCLI do
   defp export_links(json, path) do
     path
     |> Path.join("devito_links.json")
-    |> File.write(json)
+    |> File.write("{\"data\": " <> json <> "}")
   end
 end
