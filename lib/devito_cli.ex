@@ -140,7 +140,7 @@ defmodule DevitoCLI do
 
   defp print_row(%{
          "count" => count,
-         "created_at" => _created_at,
+         "inserted_at" => _inserted_at,
          "short_code" => short_code,
          "url" => url
        }) do
