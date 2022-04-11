@@ -158,7 +158,8 @@ defmodule DevitoCLI do
   defp hash_token(token) do
     :sha256
     |> :crypto.hash(token)
-    |> Base.encode64()
+    |> Base.url_encode64()
+    |> IO.inspect
   end
 
   defp export_links(json, path) do

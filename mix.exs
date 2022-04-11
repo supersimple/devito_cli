@@ -4,7 +4,7 @@ defmodule DevitoCli.MixProject do
   def project do
     [
       app: :devito_cli,
-      version: "0.1.2",
+      version: "1.0.0",
       elixir: "~> 1.10",
       escript: escript_config(),
       start_permanent: Mix.env() == :prod,
